@@ -17,6 +17,7 @@ public class FavoritoDTO {
     private LocalDateTime fechaGuardado;
     private String tipoFavorito;
     private String tituloElemento;
+    private RecursoDTO recursoExterno;
 
     public FavoritoDTO(Favorito entidad) {
         if (entidad != null) {

@@ -25,7 +25,9 @@ public class AportacionController {
     public ResponseEntity<AportacionDTO> create(@RequestBody AportacionDTO dto,
                                                 @AuthenticationPrincipal AuthenticatedUser user) {
         try {
-            dto.setIdUsuario(user.getIdUsuario());
+            if (dto != null) {
+                dto.setIdUsuario(user.getIdUsuario());
+            }
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(aportacionService.save(dto));
         } catch (IllegalArgumentException e) {
@@ -81,7 +83,9 @@ public class AportacionController {
                                                 @RequestBody AportacionDTO dto,
                                                 @AuthenticationPrincipal AuthenticatedUser user) {
         try {
-            dto.setIdUsuario(user.getIdUsuario());
+            if (dto != null) {
+                dto.setIdUsuario(user.getIdUsuario());
+            }
             return ResponseEntity.ok(aportacionService.update(id, dto));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

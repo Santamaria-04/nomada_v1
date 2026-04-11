@@ -10,6 +10,7 @@ import java.util.List;
 public class BusquedaResponseDTO {
 
     private String termino;
-    private List<RecursoDTO> recursos;
+    private List<RecursoDTO> recursosLocales;
+    private List<RecursoDTO> recursosExternos;
     private List<AportacionDTO> aportaciones;
 }

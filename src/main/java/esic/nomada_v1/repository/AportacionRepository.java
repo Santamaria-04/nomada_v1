@@ -20,6 +20,4 @@ public interface AportacionRepository extends JpaRepository<Aportacion, Integer>
     List<Aportacion> findByEliminadaFalse();
 
     List<Aportacion> findByReportadaTrueAndEliminadaFalse();
-
-    long countByIdAportacionAndReportadaTrueAndEliminadaFalse(Integer idAportacion);
 }

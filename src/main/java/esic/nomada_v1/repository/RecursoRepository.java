@@ -5,10 +5,13 @@ import org.springframework.stereotype.Repository;
 import esic.nomada_v1.model.Recurso;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RecursoRepository extends JpaRepository<Recurso, Integer> {
 
     List<Recurso> findByTituloContainingIgnoreCaseOrDescripcionContainingIgnoreCase(String titulo,
                                                                                     String descripcion);
+
+    Optional<Recurso> findByUrlEnlace(String urlEnlace);
 }

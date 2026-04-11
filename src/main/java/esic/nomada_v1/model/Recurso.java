@@ -57,7 +57,6 @@ public class Recurso {
         ARTICULO,
         VIDEO,
         PODCAST,
-        LIBRO,
-        CURSO
+        LIBRO
     }
 }

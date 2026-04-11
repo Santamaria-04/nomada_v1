@@ -8,6 +8,7 @@ import esic.nomada_v1.dto.TemaDTO;
 import esic.nomada_v1.service.TemaService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/temas")
@@ -28,16 +29,22 @@ public class TemaController {
     public ResponseEntity<TemaDTO> getById(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(temaService.findById(id));
-        } catch (RuntimeException e) {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PostMapping
     public ResponseEntity<TemaDTO> create(@RequestBody TemaDTO dto) {
-        dto.setIdTema(null);
-        TemaDTO creado = temaService.save(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        try {
+            if (dto != null) {
+                dto.setIdTema(null);
+            }
+            TemaDTO creado = temaService.save(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}")
@@ -45,10 +52,14 @@ public class TemaController {
                                           @RequestBody TemaDTO dto) {
         try {
             temaService.findById(id);
-            dto.setIdTema(id);
+            if (dto != null) {
+                dto.setIdTema(id);
+            }
             TemaDTO actualizado = temaService.save(dto);
             return ResponseEntity.ok(actualizado);
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
@@ -58,7 +69,7 @@ public class TemaController {
         try {
             temaService.deleteById(id);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }

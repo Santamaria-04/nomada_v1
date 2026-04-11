@@ -22,9 +22,10 @@ public class BusquedaController {
 
     @GetMapping
     public ResponseEntity<BusquedaResponseDTO> search(@RequestParam String termino,
+                                                      @RequestParam(required = false) String tipos,
                                                       @AuthenticationPrincipal AuthenticatedUser user) {
         try {
-            return ResponseEntity.ok(busquedaService.search(user.getIdUsuario(), termino));
+            return ResponseEntity.ok(busquedaService.search(user.getIdUsuario(), termino, tipos));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

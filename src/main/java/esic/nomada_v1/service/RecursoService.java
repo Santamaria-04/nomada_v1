@@ -37,6 +37,10 @@ public class RecursoService {
         validateDto(dto);
 
         Recurso entidad = fabricaRecurso.createRecurso(dto);
+        entidad.setTitulo(dto.getTitulo().trim());
+        entidad.setUrlEnlace(dto.getUrlEnlace().trim());
+        entidad.setDescripcion(normalizeOptionalText(dto.getDescripcion()));
+        entidad.setFuente(dto.getFuente().trim());
 
         if (dto.getIdTema() != null) {
             Tema tema = temaRepository.findById(dto.getIdTema())
@@ -56,7 +60,7 @@ public class RecursoService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public RecursoDTO findById(Integer id, Integer idUsuario) {
         Recurso recurso = recursoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Recurso no encontrado"));
@@ -98,5 +102,14 @@ public class RecursoService {
 
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
+    }
+
+    private String normalizeOptionalText(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String normalizedValue = value.trim();
+        return normalizedValue.isEmpty() ? null : normalizedValue;
     }
 }

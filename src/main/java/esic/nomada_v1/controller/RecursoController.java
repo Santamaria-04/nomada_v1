@@ -10,6 +10,7 @@ import esic.nomada_v1.security.AuthenticatedUser;
 import esic.nomada_v1.service.RecursoService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/recursos")
@@ -32,16 +33,24 @@ public class RecursoController {
         try {
             Integer idUsuario = user != null ? user.getIdUsuario() : null;
             return ResponseEntity.ok(recursoService.findById(id, idUsuario));
-        } catch (RuntimeException e) {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PostMapping
     public ResponseEntity<RecursoDTO> create(@RequestBody RecursoDTO dto) {
-        dto.setIdRecurso(null);
-        RecursoDTO creado = recursoService.save(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        try {
+            if (dto != null) {
+                dto.setIdRecurso(null);
+            }
+            RecursoDTO creado = recursoService.save(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PutMapping("/{id}")
@@ -49,10 +58,14 @@ public class RecursoController {
                                              @RequestBody RecursoDTO dto) {
         try {
             recursoService.findById(id, null);
-            dto.setIdRecurso(id);
+            if (dto != null) {
+                dto.setIdRecurso(id);
+            }
             RecursoDTO actualizado = recursoService.save(dto);
             return ResponseEntity.ok(actualizado);
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
@@ -62,7 +75,7 @@ public class RecursoController {
         try {
             recursoService.deleteById(id);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }

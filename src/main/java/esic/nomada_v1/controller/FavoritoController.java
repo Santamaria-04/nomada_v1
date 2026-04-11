@@ -25,7 +25,9 @@ public class FavoritoController {
     public ResponseEntity<FavoritoDTO> addFavorito(@RequestBody FavoritoDTO dto,
                                                    @AuthenticationPrincipal AuthenticatedUser user) {
         try {
-            dto.setIdUsuario(user.getIdUsuario());
+            if (dto != null) {
+                dto.setIdUsuario(user.getIdUsuario());
+            }
             FavoritoDTO creado = favoritoService.save(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(creado);
         } catch (IllegalArgumentException e) {
