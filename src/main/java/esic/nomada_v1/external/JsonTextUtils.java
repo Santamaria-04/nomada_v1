@@ -11,13 +11,33 @@ public final class JsonTextUtils {
     }
 
     public static List<String> objectBlocks(String json, String arrayField) {
+        if (json == null || json.isBlank()) {
+            return List.of();
+        }
         String arrayBody = arrayBody(json, arrayField);
         List<String> blocks = new ArrayList<>();
         int depth = 0;
         int start = -1;
+        boolean inString = false;
+        boolean escaped = false;
 
         for (int i = 0; i < arrayBody.length(); i++) {
             char current = arrayBody.charAt(i);
+            if (escaped) {
+                escaped = false;
+                continue;
+            }
+            if (current == '\\') {
+                escaped = true;
+                continue;
+            }
+            if (current == '"') {
+                inString = !inString;
+                continue;
+            }
+            if (inString) {
+                continue;
+            }
             if (current == '{') {
                 if (depth == 0) {
                     start = i;
@@ -71,6 +91,9 @@ public final class JsonTextUtils {
     }
 
     private static String arrayBody(String json, String arrayField) {
+        if (json == null || json.isBlank()) {
+            return "";
+        }
         int fieldIndex = json.indexOf("\"" + arrayField + "\"");
         if (fieldIndex < 0) {
             return "";
@@ -80,8 +103,25 @@ public final class JsonTextUtils {
             return "";
         }
         int depth = 0;
+        boolean inString = false;
+        boolean escaped = false;
         for (int i = start; i < json.length(); i++) {
             char current = json.charAt(i);
+            if (escaped) {
+                escaped = false;
+                continue;
+            }
+            if (current == '\\') {
+                escaped = true;
+                continue;
+            }
+            if (current == '"') {
+                inString = !inString;
+                continue;
+            }
+            if (inString) {
+                continue;
+            }
             if (current == '[') {
                 depth++;
             } else if (current == ']') {
@@ -94,7 +134,10 @@ public final class JsonTextUtils {
         return "";
     }
 
-    private static String objectBody(String json, String objectName) {
+    public static String objectBody(String json, String objectName) {
+        if (json == null || json.isBlank()) {
+            return null;
+        }
         int fieldIndex = json.indexOf("\"" + objectName + "\"");
         if (fieldIndex < 0) {
             return null;
@@ -104,8 +147,25 @@ public final class JsonTextUtils {
             return null;
         }
         int depth = 0;
+        boolean inString = false;
+        boolean escaped = false;
         for (int i = start; i < json.length(); i++) {
             char current = json.charAt(i);
+            if (escaped) {
+                escaped = false;
+                continue;
+            }
+            if (current == '\\') {
+                escaped = true;
+                continue;
+            }
+            if (current == '"') {
+                inString = !inString;
+                continue;
+            }
+            if (inString) {
+                continue;
+            }
             if (current == '{') {
                 depth++;
             } else if (current == '}') {

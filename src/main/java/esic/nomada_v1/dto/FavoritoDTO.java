@@ -17,6 +17,8 @@ public class FavoritoDTO {
     private LocalDateTime fechaGuardado;
     private String tipoFavorito;
     private String tituloElemento;
+    private RecursoDTO recurso;
+    private AportacionDTO aportacion;
     private RecursoDTO recursoExterno;
 
     public FavoritoDTO(Favorito entidad) {
@@ -32,12 +34,15 @@ public class FavoritoDTO {
                 this.idRecurso = entidad.getRecurso().getIdRecurso();
                 this.tipoFavorito = "RECURSO";
                 this.tituloElemento = entidad.getRecurso().getTitulo();
+                this.recurso = new RecursoDTO(entidad.getRecurso());
+                this.recursoExterno = this.recurso;
             }
 
             if (entidad.getAportacion() != null) {
                 this.idAportacion = entidad.getAportacion().getIdAportacion();
                 this.tipoFavorito = "APORTACION";
                 this.tituloElemento = entidad.getAportacion().getContenido();
+                this.aportacion = new AportacionDTO(entidad.getAportacion());
             }
         }
     }

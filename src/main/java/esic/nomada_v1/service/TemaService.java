@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import esic.nomada_v1.dto.TemaDTO;
 import esic.nomada_v1.model.Tema;
+import esic.nomada_v1.repository.AportacionRepository;
 import esic.nomada_v1.repository.TemaRepository;
+import esic.nomada_v1.repository.RecursoRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -16,11 +18,17 @@ public class TemaService {
 
     private final TemaRepository temaRepository;
     private final FabricaTemaService fabricaTema;
+    private final RecursoRepository recursoRepository;
+    private final AportacionRepository aportacionRepository;
 
     public TemaService(TemaRepository temaRepository,
-                       FabricaTemaService fabricaTema) {
+                       FabricaTemaService fabricaTema,
+                       RecursoRepository recursoRepository,
+                       AportacionRepository aportacionRepository) {
         this.temaRepository = temaRepository;
         this.fabricaTema = fabricaTema;
+        this.recursoRepository = recursoRepository;
+        this.aportacionRepository = aportacionRepository;
     }
 
     @Transactional
@@ -55,6 +63,12 @@ public class TemaService {
     public void deleteById(Integer id) {
         if (!temaRepository.existsById(id)) {
             throw new NoSuchElementException("Tema no encontrado");
+        }
+        if (recursoRepository.existsByTema_IdTema(id)) {
+            throw new IllegalArgumentException("No se puede eliminar un tema con recursos asociados");
+        }
+        if (aportacionRepository.existsByTema_IdTema(id)) {
+            throw new IllegalArgumentException("No se puede eliminar un tema con aportaciones asociadas");
         }
         temaRepository.deleteById(id);
     }

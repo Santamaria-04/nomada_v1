@@ -20,4 +20,10 @@ public interface AportacionRepository extends JpaRepository<Aportacion, Integer>
     List<Aportacion> findByEliminadaFalse();
 
     List<Aportacion> findByReportadaTrueAndEliminadaFalse();
+
+    boolean existsByUsuario_IdUsuario(Integer idUsuario);
+
+    boolean existsByTema_IdTema(Integer idTema);
+
+    boolean existsByRecurso_IdRecurso(Integer idRecurso);
 }

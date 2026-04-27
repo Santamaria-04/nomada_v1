@@ -40,7 +40,10 @@ public class YoutubeResourceProvider implements ExternalResourceProvider {
                 + "&q=" + encodedTerm
                 + "&key=" + URLEncoder.encode(properties.getYoutubeApiKey(), StandardCharsets.UTF_8);
 
-        String json = externalApiClient.get(url);
+        return parseResults(externalApiClient.get(url));
+    }
+
+    List<RecursoDTO> parseResults(String json) {
         List<RecursoDTO> results = new ArrayList<>();
 
         for (String item : JsonTextUtils.objectBlocks(json, "items")) {

@@ -6,6 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import esic.nomada_v1.dto.RecursoDTO;
 import esic.nomada_v1.model.Recurso;
 import esic.nomada_v1.model.Tema;
+import esic.nomada_v1.repository.AportacionRepository;
+import esic.nomada_v1.repository.FavoritoRepository;
+import esic.nomada_v1.repository.HistorialRepository;
 import esic.nomada_v1.repository.RecursoRepository;
 import esic.nomada_v1.repository.TemaRepository;
 
@@ -21,15 +24,24 @@ public class RecursoService {
     private final TemaRepository temaRepository;
     private final FabricaRecursoService fabricaRecurso;
     private final HistorialService historialService;
+    private final AportacionRepository aportacionRepository;
+    private final FavoritoRepository favoritoRepository;
+    private final HistorialRepository historialRepository;
 
     public RecursoService(RecursoRepository recursoRepository,
                           TemaRepository temaRepository,
                           FabricaRecursoService fabricaRecurso,
-                          HistorialService historialService) {
+                          HistorialService historialService,
+                          AportacionRepository aportacionRepository,
+                          FavoritoRepository favoritoRepository,
+                          HistorialRepository historialRepository) {
         this.recursoRepository = recursoRepository;
         this.temaRepository = temaRepository;
         this.fabricaRecurso = fabricaRecurso;
         this.historialService = historialService;
+        this.aportacionRepository = aportacionRepository;
+        this.favoritoRepository = favoritoRepository;
+        this.historialRepository = historialRepository;
     }
 
     @Transactional
@@ -60,6 +72,14 @@ public class RecursoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<RecursoDTO> findByTema(Integer idTema) {
+        return recursoRepository.findByTema_IdTema(idTema)
+                .stream()
+                .map(fabricaRecurso::createRecursoDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public RecursoDTO findById(Integer id, Integer idUsuario) {
         Recurso recurso = recursoRepository.findById(id)
@@ -75,6 +95,15 @@ public class RecursoService {
     public void deleteById(Integer id) {
         if (!recursoRepository.existsById(id)) {
             throw new NoSuchElementException("Recurso no encontrado");
+        }
+        if (aportacionRepository.existsByRecurso_IdRecurso(id)) {
+            throw new IllegalArgumentException("No se puede eliminar un recurso con aportaciones asociadas");
+        }
+        if (favoritoRepository.existsByRecurso_IdRecurso(id)) {
+            throw new IllegalArgumentException("No se puede eliminar un recurso que está en favoritos");
+        }
+        if (historialRepository.existsByRecurso_IdRecurso(id)) {
+            throw new IllegalArgumentException("No se puede eliminar un recurso con historial asociado");
         }
         recursoRepository.deleteById(id);
     }

@@ -14,4 +14,10 @@ public interface FavoritoRepository extends JpaRepository<Favorito, Integer> {
     boolean existsByUsuario_IdUsuarioAndRecurso_IdRecurso(Integer idUsuario, Integer idRecurso);
 
     boolean existsByUsuario_IdUsuarioAndAportacion_IdAportacion(Integer idUsuario, Integer idAportacion);
+
+    boolean existsByUsuario_IdUsuario(Integer idUsuario);
+
+    boolean existsByRecurso_IdRecurso(Integer idRecurso);
+
+    boolean existsByAportacion_IdAportacion(Integer idAportacion);
 }

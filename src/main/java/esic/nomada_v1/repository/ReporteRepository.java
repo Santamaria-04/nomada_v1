@@ -19,4 +19,8 @@ public interface ReporteRepository extends JpaRepository<Reporte, Integer> {
                                                                                 EstadoReporte estado);
 
     List<Reporte> findByAportacion_IdAportacionAndEstado(Integer idAportacion, EstadoReporte estado);
+
+    boolean existsByUsuarioReporta_IdUsuario(Integer idUsuario);
+
+    boolean existsByAportacion_IdAportacion(Integer idAportacion);
 }

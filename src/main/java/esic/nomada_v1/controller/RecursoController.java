@@ -27,6 +27,11 @@ public class RecursoController {
         return ResponseEntity.ok(recursoService.findAll());
     }
 
+    @GetMapping("/tema/{idTema}")
+    public ResponseEntity<List<RecursoDTO>> getByTema(@PathVariable Integer idTema) {
+        return ResponseEntity.ok(recursoService.findByTema(idTema));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<RecursoDTO> getById(@PathVariable Integer id,
                                               @AuthenticationPrincipal AuthenticatedUser user) {
@@ -75,6 +80,8 @@ public class RecursoController {
         try {
             recursoService.deleteById(id);
             return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

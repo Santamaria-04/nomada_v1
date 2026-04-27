@@ -47,6 +47,15 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UsuarioDTO> findMe(@AuthenticationPrincipal AuthenticatedUser user) {
+        try {
+            return ResponseEntity.ok(usuarioService.findById(user.getIdUsuario()));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> findById(@PathVariable Integer id,
                                                @AuthenticationPrincipal AuthenticatedUser user) {
@@ -85,6 +94,8 @@ public class UsuarioController {
         try {
             usuarioService.delete(id);
             return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }

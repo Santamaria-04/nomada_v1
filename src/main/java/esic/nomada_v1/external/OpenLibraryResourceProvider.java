@@ -37,7 +37,10 @@ public class OpenLibraryResourceProvider implements ExternalResourceProvider {
         String encodedTerm = URLEncoder.encode(termino, StandardCharsets.UTF_8);
         String url = "https://openlibrary.org/search.json?limit=" + limit + "&q=" + encodedTerm;
 
-        String json = externalApiClient.get(url);
+        return parseResults(externalApiClient.get(url), encodedTerm);
+    }
+
+    List<RecursoDTO> parseResults(String json, String encodedTerm) {
         List<RecursoDTO> results = new ArrayList<>();
 
         for (String item : JsonTextUtils.objectBlocks(json, "docs")) {
@@ -55,7 +58,9 @@ public class OpenLibraryResourceProvider implements ExternalResourceProvider {
             dto.setDescripcion(author == null ? null : "Autor: " + author);
             dto.setTipoRecurso(Recurso.TipoRecurso.LIBRO);
             dto.setFuente("Open Library");
-            dto.setUrlEnlace(key == null ? "https://openlibrary.org/search?q=" + encodedTerm : "https://openlibrary.org" + key);
+            dto.setUrlEnlace(key == null || key.isBlank()
+                    ? "https://openlibrary.org/search?q=" + encodedTerm
+                    : "https://openlibrary.org" + key);
 
             if (firstPublishYear != null) {
                 dto.setFechaPublicacion(LocalDate.of(Integer.parseInt(firstPublishYear), 1, 1));

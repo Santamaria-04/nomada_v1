@@ -131,6 +131,20 @@ Respuesta esperada:
 200 OK
 ```
 
+### Obtener mi usuario autenticado
+
+Usuario autenticado.
+
+```http
+GET /api/usuarios/me
+Authorization: Bearer TOKEN
+```
+
+Uso recomendado:
+
+- Rehidratar sesion al arrancar el frontend.
+- Refrescar los datos del perfil tras login o edicion.
+
 ### Obtener usuario por id
 
 Propietario o `ADMIN`.
@@ -186,6 +200,10 @@ Respuesta esperada:
 ```http
 204 No Content
 ```
+
+Notas:
+
+- Si el usuario tiene aportaciones, favoritos, historial o reportes asociados, devuelve `400 Bad Request`.
 
 ## Temas
 
@@ -260,6 +278,10 @@ DELETE /api/temas/{id}
 Authorization: Bearer ADMIN_TOKEN
 ```
 
+Notas:
+
+- Si el tema tiene recursos o aportaciones asociados, devuelve `400 Bad Request`.
+
 ## Recursos
 
 Los recursos locales los gestiona el administrador. Los recursos externos se devuelven en busquedas y solo se guardan en BBDD si el usuario los marca como favoritos.
@@ -270,6 +292,15 @@ Usuario autenticado.
 
 ```http
 GET /api/recursos
+Authorization: Bearer TOKEN
+```
+
+### Listar recursos por tema
+
+Usuario autenticado.
+
+```http
+GET /api/recursos/tema/{idTema}
 Authorization: Bearer TOKEN
 ```
 
@@ -331,6 +362,10 @@ Solo `ADMIN`.
 DELETE /api/recursos/{id}
 Authorization: Bearer ADMIN_TOKEN
 ```
+
+Notas:
+
+- Si el recurso tiene aportaciones, favoritos o historial asociados, devuelve `400 Bad Request`.
 
 ## Busquedas
 
@@ -566,6 +601,12 @@ Propietario o `ADMIN`.
 GET /api/favoritos/usuario/{idUsuario}
 Authorization: Bearer TOKEN
 ```
+
+Respuesta esperada:
+
+- Si el favorito es de recurso, el backend devuelve `idRecurso`, `tituloElemento` y tambien el objeto `recurso`.
+- Si el favorito es de aportacion, devuelve `idAportacion`, `tituloElemento` y tambien el objeto `aportacion`.
+- El campo `recursoExterno` se mantiene por compatibilidad y replica el mismo contenido de `recurso` cuando aplica.
 
 ### Eliminar favorito
 

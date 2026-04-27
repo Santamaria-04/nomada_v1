@@ -37,7 +37,10 @@ public class ItunesPodcastResourceProvider implements ExternalResourceProvider {
         String encodedTerm = URLEncoder.encode(termino, StandardCharsets.UTF_8);
         String url = "https://itunes.apple.com/search?media=podcast&country=ES&limit=" + limit + "&term=" + encodedTerm;
 
-        String json = externalApiClient.get(url);
+        return parseResults(externalApiClient.get(url));
+    }
+
+    List<RecursoDTO> parseResults(String json) {
         List<RecursoDTO> results = new ArrayList<>();
 
         for (String item : JsonTextUtils.objectBlocks(json, "results")) {

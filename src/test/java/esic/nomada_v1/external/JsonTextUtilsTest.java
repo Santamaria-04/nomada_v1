@@ -18,4 +18,26 @@ class JsonTextUtilsTest {
         assertEquals("Uno", JsonTextUtils.stringField(items.get(0), "title"));
         assertEquals("abc", JsonTextUtils.nestedStringField(items.get(0), "id", "videoId"));
     }
+
+    @Test
+    void shouldIgnoreBracesInsideJsonStrings() {
+        String json = """
+                {
+                  "query": {
+                    "search": [
+                      {
+                        "title": "Java",
+                        "snippet": "Texto con llaves { y } dentro"
+                      }
+                    ]
+                  }
+                }
+                """;
+
+        String query = JsonTextUtils.objectBody(json, "query");
+        List<String> items = JsonTextUtils.objectBlocks(query, "search");
+
+        assertEquals(1, items.size());
+        assertEquals("Texto con llaves { y } dentro", JsonTextUtils.stringField(items.get(0), "snippet"));
+    }
 }

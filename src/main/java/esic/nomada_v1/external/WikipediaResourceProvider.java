@@ -38,10 +38,13 @@ public class WikipediaResourceProvider implements ExternalResourceProvider {
                 + "&srlimit=" + limit
                 + "&srsearch=" + encodedTerm;
 
-        String json = externalApiClient.get(url);
+        return parseResults(externalApiClient.get(url));
+    }
+
+    List<RecursoDTO> parseResults(String json) {
         List<RecursoDTO> results = new ArrayList<>();
 
-        for (String item : JsonTextUtils.objectBlocks(json, "search")) {
+        for (String item : JsonTextUtils.objectBlocks(JsonTextUtils.objectBody(json, "query"), "search")) {
             String title = JsonTextUtils.stringField(item, "title");
             String snippet = JsonTextUtils.cleanHtml(JsonTextUtils.stringField(item, "snippet"));
 

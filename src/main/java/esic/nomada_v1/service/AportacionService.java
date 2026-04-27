@@ -175,8 +175,10 @@ public class AportacionService {
         if (dto.getIdUsuario() == null) {
             throw new IllegalArgumentException("La aportación debe incluir un usuario");
         }
-        if (dto.getIdTema() == null && dto.getIdRecurso() == null) {
-            throw new IllegalArgumentException("La aportación debe estar asociada a un tema o a un recurso");
+        boolean hasTema = dto.getIdTema() != null;
+        boolean hasRecurso = dto.getIdRecurso() != null;
+        if (hasTema == hasRecurso) {
+            throw new IllegalArgumentException("La aportación debe estar asociada exactamente a un tema o a un recurso");
         }
         if (dto.getContenido() == null || dto.getContenido().trim().isEmpty()) {
             throw new IllegalArgumentException("El contenido de la aportación es obligatorio");

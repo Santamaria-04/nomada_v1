@@ -13,5 +13,9 @@ public interface RecursoRepository extends JpaRepository<Recurso, Integer> {
     List<Recurso> findByTituloContainingIgnoreCaseOrDescripcionContainingIgnoreCase(String titulo,
                                                                                     String descripcion);
 
+    List<Recurso> findByTema_IdTema(Integer idTema);
+
     Optional<Recurso> findByUrlEnlace(String urlEnlace);
+
+    boolean existsByTema_IdTema(Integer idTema);
 }

@@ -6,6 +6,10 @@ import esic.nomada_v1.dto.AuthResponseDTO;
 import esic.nomada_v1.dto.LoginRequestDTO;
 import esic.nomada_v1.dto.UsuarioDTO;
 import esic.nomada_v1.model.Usuario;
+import esic.nomada_v1.repository.AportacionRepository;
+import esic.nomada_v1.repository.FavoritoRepository;
+import esic.nomada_v1.repository.HistorialRepository;
+import esic.nomada_v1.repository.ReporteRepository;
 import esic.nomada_v1.repository.UsuarioRepository;
 import esic.nomada_v1.security.AuthenticatedUser;
 import esic.nomada_v1.security.JwtService;
@@ -23,13 +27,25 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final FabricaUsuarioService fabricaUsuario;
     private final JwtService jwtService;
+    private final AportacionRepository aportacionRepository;
+    private final FavoritoRepository favoritoRepository;
+    private final HistorialRepository historialRepository;
+    private final ReporteRepository reporteRepository;
 
     public UsuarioService(UsuarioRepository usuarioRepository,
                           FabricaUsuarioService fabricaUsuario,
-                          JwtService jwtService) {
+                          JwtService jwtService,
+                          AportacionRepository aportacionRepository,
+                          FavoritoRepository favoritoRepository,
+                          HistorialRepository historialRepository,
+                          ReporteRepository reporteRepository) {
         this.usuarioRepository = usuarioRepository;
         this.fabricaUsuario = fabricaUsuario;
         this.jwtService = jwtService;
+        this.aportacionRepository = aportacionRepository;
+        this.favoritoRepository = favoritoRepository;
+        this.historialRepository = historialRepository;
+        this.reporteRepository = reporteRepository;
     }
 
     @Transactional
@@ -126,6 +142,18 @@ public class UsuarioService {
     public void delete(Integer id) {
         if (!usuarioRepository.existsById(id)) {
             throw new NoSuchElementException("Usuario no encontrado");
+        }
+        if (aportacionRepository.existsByUsuario_IdUsuario(id)) {
+            throw new IllegalArgumentException("No se puede eliminar un usuario con aportaciones asociadas");
+        }
+        if (favoritoRepository.existsByUsuario_IdUsuario(id)) {
+            throw new IllegalArgumentException("No se puede eliminar un usuario con favoritos asociados");
+        }
+        if (historialRepository.existsByUsuario_IdUsuario(id)) {
+            throw new IllegalArgumentException("No se puede eliminar un usuario con historial asociado");
+        }
+        if (reporteRepository.existsByUsuarioReporta_IdUsuario(id)) {
+            throw new IllegalArgumentException("No se puede eliminar un usuario con reportes asociados");
         }
         usuarioRepository.deleteById(id);
     }

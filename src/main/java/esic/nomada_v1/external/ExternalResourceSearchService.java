@@ -1,5 +1,7 @@
 package esic.nomada_v1.external;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import esic.nomada_v1.config.ExternalApiProperties;
 import esic.nomada_v1.dto.RecursoDTO;
@@ -11,6 +13,8 @@ import java.util.Set;
 
 @Service
 public class ExternalResourceSearchService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalResourceSearchService.class);
 
     private final List<ExternalResourceProvider> providers;
     private final ExternalApiProperties properties;
@@ -36,8 +40,9 @@ public class ExternalResourceSearchService {
 
             try {
                 results.addAll(provider.search(termino, limit));
-            } catch (RuntimeException ignored) {
-                // External APIs should not break the local search flow.
+            } catch (RuntimeException e) {
+                LOGGER.warn("Proveedor externo {} fallo para termino '{}': {}",
+                        provider.getClass().getSimpleName(), termino, e.getMessage());
             }
         }
 

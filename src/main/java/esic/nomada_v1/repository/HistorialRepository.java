@@ -12,4 +12,8 @@ public interface HistorialRepository extends JpaRepository<Historial, Integer> {
     List<Historial> findByUsuario_IdUsuarioOrderByFechaDesc(Integer idUsuario);
 
     void deleteByUsuario_IdUsuario(Integer idUsuario);
+
+    boolean existsByUsuario_IdUsuario(Integer idUsuario);
+
+    boolean existsByRecurso_IdRecurso(Integer idRecurso);
 }
