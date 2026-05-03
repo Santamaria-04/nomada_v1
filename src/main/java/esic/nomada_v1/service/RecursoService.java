@@ -52,6 +52,7 @@ public class RecursoService {
         entidad.setTitulo(dto.getTitulo().trim());
         entidad.setUrlEnlace(dto.getUrlEnlace().trim());
         entidad.setDescripcion(normalizeOptionalText(dto.getDescripcion()));
+        entidad.setImagenUrl(normalizeOptionalText(dto.getImagenUrl()));
         entidad.setFuente(dto.getFuente().trim());
 
         if (dto.getIdTema() != null) {

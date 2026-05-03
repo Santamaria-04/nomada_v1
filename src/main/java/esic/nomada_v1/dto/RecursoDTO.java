@@ -14,6 +14,7 @@ public class RecursoDTO {
     private String titulo;
     private String urlEnlace;
     private String descripcion;
+    private String imagenUrl;
     private Recurso.TipoRecurso tipoRecurso;
     private String fuente;
     private LocalDate fechaPublicacion;
@@ -26,6 +27,7 @@ public class RecursoDTO {
             this.titulo = entidad.getTitulo();
             this.urlEnlace = entidad.getUrlEnlace();
             this.descripcion = entidad.getDescripcion();
+            this.imagenUrl = entidad.getImagenUrl();
             this.tipoRecurso = entidad.getTipoRecurso();
             this.fuente = entidad.getFuente();
             this.fechaPublicacion = entidad.getFechaPublicacion();

@@ -51,6 +51,7 @@ public class YoutubeResourceProvider implements ExternalResourceProvider {
             String title = JsonTextUtils.nestedStringField(item, "snippet", "title");
             String description = JsonTextUtils.nestedStringField(item, "snippet", "description");
             String publishedAt = JsonTextUtils.nestedStringField(item, "snippet", "publishedAt");
+            String thumbnailUrl = extractThumbnailUrl(item);
 
             if (videoId == null || videoId.isBlank() || title == null || title.isBlank()) {
                 continue;
@@ -59,6 +60,7 @@ public class YoutubeResourceProvider implements ExternalResourceProvider {
             RecursoDTO dto = new RecursoDTO();
             dto.setTitulo(title);
             dto.setDescripcion(description);
+            dto.setImagenUrl(thumbnailUrl);
             dto.setTipoRecurso(Recurso.TipoRecurso.VIDEO);
             dto.setFuente("YouTube");
             dto.setUrlEnlace("https://www.youtube.com/watch?v=" + videoId);
@@ -71,5 +73,35 @@ public class YoutubeResourceProvider implements ExternalResourceProvider {
         }
 
         return results;
+    }
+
+    private String extractThumbnailUrl(String itemJson) {
+        String snippet = JsonTextUtils.objectBody(itemJson, "snippet");
+        if (snippet == null || snippet.isBlank()) {
+            return null;
+        }
+        String thumbnails = JsonTextUtils.objectBody(snippet, "thumbnails");
+        if (thumbnails == null || thumbnails.isBlank()) {
+            return null;
+        }
+
+        String url = thumbnailUrlForSize(thumbnails, "high");
+        if (url != null) {
+            return url;
+        }
+        url = thumbnailUrlForSize(thumbnails, "medium");
+        if (url != null) {
+            return url;
+        }
+        return thumbnailUrlForSize(thumbnails, "default");
+    }
+
+    private String thumbnailUrlForSize(String thumbnailsJson, String sizeKey) {
+        String sizeObject = JsonTextUtils.objectBody(thumbnailsJson, sizeKey);
+        if (sizeObject == null || sizeObject.isBlank()) {
+            return null;
+        }
+        String url = JsonTextUtils.stringField(sizeObject, "url");
+        return (url == null || url.isBlank()) ? null : url;
     }
 }

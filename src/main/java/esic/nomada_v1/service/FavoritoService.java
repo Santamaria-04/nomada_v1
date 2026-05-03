@@ -153,6 +153,7 @@ public class FavoritoService {
         recurso.setTitulo(dto.getTitulo().trim());
         recurso.setUrlEnlace(urlEnlace);
         recurso.setDescripcion(dto.getDescripcion());
+        recurso.setImagenUrl(isBlank(dto.getImagenUrl()) ? null : dto.getImagenUrl().trim());
         recurso.setTipoRecurso(dto.getTipoRecurso());
         recurso.setFuente(dto.getFuente().trim());
         recurso.setFechaPublicacion(dto.getFechaPublicacion());

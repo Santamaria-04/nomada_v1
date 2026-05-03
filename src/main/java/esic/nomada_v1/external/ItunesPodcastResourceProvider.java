@@ -48,6 +48,11 @@ public class ItunesPodcastResourceProvider implements ExternalResourceProvider {
             String artist = JsonTextUtils.stringField(item, "artistName");
             String link = JsonTextUtils.stringField(item, "collectionViewUrl");
             String releaseDate = JsonTextUtils.stringField(item, "releaseDate");
+            String artworkUrl = firstNonBlank(
+                    JsonTextUtils.stringField(item, "artworkUrl600"),
+                    JsonTextUtils.stringField(item, "artworkUrl100"),
+                    JsonTextUtils.stringField(item, "artworkUrl60")
+            );
 
             if (title == null || title.isBlank() || link == null || link.isBlank()) {
                 continue;
@@ -56,6 +61,7 @@ public class ItunesPodcastResourceProvider implements ExternalResourceProvider {
             RecursoDTO dto = new RecursoDTO();
             dto.setTitulo(title);
             dto.setDescripcion(artist == null ? null : "Podcast de " + artist);
+            dto.setImagenUrl(artworkUrl);
             dto.setTipoRecurso(Recurso.TipoRecurso.PODCAST);
             dto.setFuente("Apple Podcasts");
             dto.setUrlEnlace(link);
@@ -68,5 +74,17 @@ public class ItunesPodcastResourceProvider implements ExternalResourceProvider {
         }
 
         return results;
+    }
+
+    private String firstNonBlank(String... candidates) {
+        if (candidates == null) {
+            return null;
+        }
+        for (String candidate : candidates) {
+            if (candidate != null && !candidate.isBlank()) {
+                return candidate;
+            }
+        }
+        return null;
     }
 }

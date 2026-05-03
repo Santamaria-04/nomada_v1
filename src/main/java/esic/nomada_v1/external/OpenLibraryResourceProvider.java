@@ -48,6 +48,8 @@ public class OpenLibraryResourceProvider implements ExternalResourceProvider {
             String key = JsonTextUtils.stringField(item, "key");
             String author = JsonTextUtils.arrayFirstValue(item, "author_name");
             String firstPublishYear = JsonTextUtils.intField(item, "first_publish_year");
+            String coverId = JsonTextUtils.intField(item, "cover_i");
+            String isbn = JsonTextUtils.arrayFirstValue(item, "isbn");
 
             if (title == null || title.isBlank()) {
                 continue;
@@ -56,6 +58,7 @@ public class OpenLibraryResourceProvider implements ExternalResourceProvider {
             RecursoDTO dto = new RecursoDTO();
             dto.setTitulo(title);
             dto.setDescripcion(author == null ? null : "Autor: " + author);
+            dto.setImagenUrl(buildCoverUrl(coverId, isbn));
             dto.setTipoRecurso(Recurso.TipoRecurso.LIBRO);
             dto.setFuente("Open Library");
             dto.setUrlEnlace(key == null || key.isBlank()
@@ -70,5 +73,19 @@ public class OpenLibraryResourceProvider implements ExternalResourceProvider {
         }
 
         return results;
+    }
+
+    private String buildCoverUrl(String coverId, String isbn) {
+        if (coverId != null && !coverId.isBlank()) {
+            return "https://covers.openlibrary.org/b/id/" + coverId + "-M.jpg";
+        }
+        if (isbn != null && !isbn.isBlank()) {
+            return "https://covers.openlibrary.org/b/isbn/" + urlEscape(isbn) + "-M.jpg";
+        }
+        return null;
+    }
+
+    private String urlEscape(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 }

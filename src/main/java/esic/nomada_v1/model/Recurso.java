@@ -28,6 +28,9 @@ public class Recurso {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
+    @Column(name = "imagen_url", length = 600)
+    private String imagenUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_recurso", nullable = false)
     private TipoRecurso tipoRecurso;
@@ -48,6 +51,7 @@ public class Recurso {
         this.titulo = dto.getTitulo();
         this.urlEnlace = dto.getUrlEnlace();
         this.descripcion = dto.getDescripcion();
+        this.imagenUrl = dto.getImagenUrl();
         this.tipoRecurso = dto.getTipoRecurso();
         this.fuente = dto.getFuente();
         this.fechaPublicacion = dto.getFechaPublicacion();
